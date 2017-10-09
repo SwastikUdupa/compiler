@@ -1,33 +1,33 @@
 %{
-	#include <stdio.h>	
+  #include <stdio.h>
+  int yyerror();
 %}
 
-%token NEWLINE DIGIT
+%token DIGIT
+
+%left '+'
+%left '*'
 
 %%
 
-start: expr NEWLINE {
-					printf("\nComplete\n");
-					exit(1);
-					}
-;
+start : expr '\n'  { printf("Expression value = %d",$1);}
+	;
 
-expr: expr '+' expr {printf("+ ");}
-	| expr '-' expr {printf("- ");}
-	| '(' expr ')'
-	| DIGIT {printf("%d ", $1);}
-;
+expr:  expr '+' expr		{$$ = $1 + $3;}
+	| expr '*' expr		{$$ = $1 * $3;}
+	| '(' expr ')'	 	{$$ = $2;}
+	| DIGIT			{$$ = $1;}
+	;
 
 %%
 
-void yyerror(char const *c)
+int yyerror()
 {
-	printf("yerror %s\n", c);
-	return ;
+	printf("Error");
 }
 
 int main()
 {
-	yyparse();
-	return 1;
+  yyparse();
+  return 1;
 }
